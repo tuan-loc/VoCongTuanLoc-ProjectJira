@@ -4,6 +4,7 @@ import {
   DOMAIN_JIRA,
   TOKEN_CYBERSOFT,
 } from "../util/constants/settingSystem";
+import { baseService } from "./baseService";
 
 export const jiraService = {
   signinJira: (userLogin) => {
@@ -46,4 +47,35 @@ export const jiraService = {
       },
     });
   },
+
+  getListProject: () => {
+    return Axios({
+      url: `${DOMAIN_JIRA}/Project/getAllProject`,
+      method: "GET",
+      headers: {
+        TokenCybersoft: TOKEN_CYBERSOFT,
+        Authorization: "Bearer " + localStorage.getItem(ACCESS_TOKEN),
+      },
+    });
+  },
+
+  updateProject: (projectUpdate) => {
+    return Axios({
+      url: `${DOMAIN_JIRA}/Project/updateProject?projectId=${projectUpdate.id}`,
+      method: "PUT",
+      data: projectUpdate,
+      headers: {
+        TokenCybersoft: TOKEN_CYBERSOFT,
+        Authorization: "Bearer " + localStorage.getItem(ACCESS_TOKEN),
+      },
+    });
+  },
 };
+
+// export class jiraService extends baseService {
+//   constructor() {
+//     super();
+//   }
+
+//   deleteProject
+// }

@@ -17,7 +17,6 @@ function* getAllProjectCategorySaga(action) {
         data: data.content,
       });
     }
-    console.log(data);
   } catch (error) {
     console.log(error.response.data);
   }

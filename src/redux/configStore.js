@@ -4,6 +4,9 @@ import reduxThunk from "redux-thunk";
 import { HistoryReducer } from "./reducers/HistoryReducer";
 import { UserLoginJiraReducer } from "./reducers/UserJiraReducer";
 import { ProjectCategoryReducer } from "./reducers/ProjectCategoryReducer";
+import { ProjectJiraReducer } from "./reducers/ProjectJiraReducer";
+import { drawerReducer } from "./reducers/DrawerJira";
+import { ProjectReducer } from "./reducers/ProjectReducer";
 
 // middleware saga
 import createMiddleWareSaga from "redux-saga";
@@ -16,6 +19,9 @@ const rootReducer = combineReducers({
   HistoryReducer,
   UserLoginJiraReducer,
   ProjectCategoryReducer,
+  ProjectJiraReducer,
+  drawerReducer,
+  ProjectReducer,
 });
 
 const store = createStore(

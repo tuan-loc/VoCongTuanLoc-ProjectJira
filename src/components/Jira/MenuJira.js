@@ -10,7 +10,7 @@ export default function MenuJira() {
           <img src={require("../../assets/img/10.jpg")} alt="10" />
         </div>
         <div className="account-info">
-          <p>CyberLearn.vn</p>
+          <p>Tuan Loc</p>
           <p>Report bugs</p>
         </div>
       </div>
@@ -23,7 +23,7 @@ export default function MenuJira() {
             to="/jira"
             activeClassName="active font-weight-bold text-primary"
           >
-            Cyber Board
+            Jira Board
           </NavLink>
         </div>
         <div>
@@ -35,6 +35,17 @@ export default function MenuJira() {
             activeClassName="active font-weight-bold text-primary"
           >
             Create project
+          </NavLink>
+        </div>
+        <div>
+          <i className="fa fa-clipboard-list mr-1" />
+          <NavLink
+            activeStyle={{ color: "blue" }}
+            className="text-dark"
+            to="/projectmanagement"
+            activeClassName="active font-weight-bold text-primary"
+          >
+            Project management
           </NavLink>
         </div>
       </div>

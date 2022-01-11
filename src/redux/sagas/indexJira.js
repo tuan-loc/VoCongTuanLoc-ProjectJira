@@ -7,7 +7,7 @@ export default function indexJira() {
   return (
     <div className="main">
       <HeaderMain />
-      <h3>Cyber Board</h3>
+      <h3>Jira Board</h3>
       <InfoMain />
       <ContentMain />
     </div>

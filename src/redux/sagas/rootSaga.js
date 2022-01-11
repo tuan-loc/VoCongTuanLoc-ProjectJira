@@ -8,5 +8,7 @@ export function* rootSaga() {
     Jira.theoDoiSignin(),
     ProjectCategorySaga.theoDoiGetAllProjectCategory(),
     ProjectSaga.theoDoiCreateProjectSaga(),
+    ProjectSaga.theoDoiGetListProjectSaga(),
+    ProjectSaga.theoDoiUpdateProjectSaga(),
   ]);
 }
