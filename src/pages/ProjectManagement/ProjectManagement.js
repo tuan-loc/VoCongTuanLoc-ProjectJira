@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Space, Tag } from "antd";
+import {
+  Table,
+  Button,
+  Space,
+  Tag,
+  Popconfirm,
+  message,
+  Avatar,
+  Popover,
+  AutoComplete,
+} from "antd";
 import ReactHtmlParser from "react-html-parser";
 import { FormOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
@@ -9,6 +19,10 @@ export default function ProjectManagement(props) {
   const projectList = useSelector(
     (state) => state.ProjectJiraReducer.projectList
   );
+
+  const { userSearch } = useSelector((state) => state.UserLoginJiraReducer);
+
+  const [value, setValue] = useState("");
 
   const dispatch = useDispatch();
 
@@ -114,6 +128,59 @@ export default function ProjectManagement(props) {
       },
     },
     {
+      title: "members",
+      key: "members",
+      render: (text, record, index) => {
+        return (
+          <div>
+            {record.members?.slice(0, 3).map((member, index) => {
+              return <Avatar key={index} src={member.avatar} />;
+            })}
+
+            {record.members?.length > 3 ? <Avatar>...</Avatar> : ""}
+
+            <Popover
+              placement="rightTop"
+              title={"Add user"}
+              content={() => {
+                return (
+                  <AutoComplete
+                    options={userSearch?.map((user, index) => {
+                      return {
+                        label: user.name,
+                        value: user.userId.toString(),
+                      };
+                    })}
+                    value={value}
+                    onChange={(text) => {
+                      setValue(text);
+                    }}
+                    onSelect={(valueSelect, option) => {
+                      setValue(option.label);
+                      dispatch({
+                        type: "ADD_USER_PROJECT_API",
+                        userProject: {
+                          projectId: record.id,
+                          userId: valueSelect,
+                        },
+                      });
+                    }}
+                    style={{ width: "100%" }}
+                    onSearch={(value) => {
+                      dispatch({ type: "GET_USER_API", keyWord: value });
+                    }}
+                  />
+                );
+              }}
+              trigger="click"
+            >
+              <Button style={{ borderRadius: "50%" }}>+</Button>
+            </Popover>
+          </div>
+        );
+      },
+    },
+    {
       title: "Action",
       key: "action",
       render: (text, record, index) => (
@@ -135,9 +202,18 @@ export default function ProjectManagement(props) {
           >
             <FormOutlined style={{ fontSize: 17 }} />
           </button>
-          <button className="btn btn-danger">
-            <DeleteOutlined style={{ fontSize: 17 }} />
-          </button>
+          <Popconfirm
+            title="Are you sure to delete this project?"
+            onConfirm={() => {
+              dispatch({ type: "DELETE_PROJECT_SAGA", idProject: record.id });
+            }}
+            okText="Yes"
+            cancelText="No"
+          >
+            <button className="btn btn-danger">
+              <DeleteOutlined style={{ fontSize: 17 }} />
+            </button>
+          </Popconfirm>
         </Space>
       ),
     },

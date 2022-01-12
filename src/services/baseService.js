@@ -1,5 +1,9 @@
-import { Axios } from "axios";
-import { ACCESS_TOKEN, TOKEN_CYBERSOFT } from "../util/constants/settingSystem";
+import Axios from "axios";
+import {
+  ACCESS_TOKEN,
+  DOMAIN_JIRA,
+  TOKEN_CYBERSOFT,
+} from "../util/constants/settingSystem";
 
 export class baseService {
   put = (url, model) => {

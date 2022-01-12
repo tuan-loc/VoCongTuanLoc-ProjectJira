@@ -10,5 +10,8 @@ export function* rootSaga() {
     ProjectSaga.theoDoiCreateProjectSaga(),
     ProjectSaga.theoDoiGetListProjectSaga(),
     ProjectSaga.theoDoiUpdateProjectSaga(),
+    ProjectSaga.theoDoiDeleteProject(),
+    Jira.theoDoiGetUser(),
+    Jira.theoDoiAddUserProject(),
   ]);
 }

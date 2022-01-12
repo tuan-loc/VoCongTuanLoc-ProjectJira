@@ -71,11 +71,3 @@ export const jiraService = {
     });
   },
 };
-
-// export class jiraService extends baseService {
-//   constructor() {
-//     super();
-//   }
-
-//   deleteProject
-// }
