@@ -3,9 +3,8 @@ import { Drawer, Space, Button } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 
 export default function Modal(props) {
-  const { visible, ComponentContentDrawer, callBackSubmit } = useSelector(
-    (state) => state.drawerReducer
-  );
+  const { visible, ComponentContentDrawer, callBackSubmit, title } =
+    useSelector((state) => state.drawerReducer);
   const dispatch = useDispatch();
 
   const showDrawer = () => {
@@ -19,7 +18,7 @@ export default function Modal(props) {
   return (
     <>
       <Drawer
-        title="Create a new account"
+        title={title}
         width={720}
         onClose={onClose}
         visible={visible}

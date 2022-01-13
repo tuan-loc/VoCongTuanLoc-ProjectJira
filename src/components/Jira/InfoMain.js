@@ -1,30 +1,39 @@
 import React from "react";
 import "../../index.css";
+import ReactHtmlParser from "react-html-parser";
 
-export default function InfoMain() {
+export default function InfoMain(props) {
+  const { projectDetail } = props;
+
+  const renderAvatar = () => {
+    return projectDetail.members?.map((user, index) => {
+      return (
+        <div key={index} className="avatar">
+          <img src={user.avatar} alt={user.avatar} />
+        </div>
+      );
+    });
+  };
+
   return (
-    <div className="info" style={{ display: "flex" }}>
-      <div className="search-block">
-        <input className="search" />
-        <i className="fa fa-search" />
-      </div>
-      <div className="avatar-group" style={{ display: "flex" }}>
-        <div className="avatar">
-          <img src={require("../../assets/img/01.jpg")} alt="5" />
+    <>
+      <h3>{projectDetail.projectName}</h3>
+      <section>{ReactHtmlParser(projectDetail.description)}</section>
+      <div className="info" style={{ display: "flex" }}>
+        <div className="search-block">
+          <input className="search" />
+          <i className="fa fa-search" />
         </div>
-        <div className="avatar">
-          <img src={require("../../assets/img/02.jpg")} alt="6" />
+        <div className="avatar-group" style={{ display: "flex" }}>
+          {renderAvatar()}
         </div>
-        <div className="avatar">
-          <img src={require("../../assets/img/03.jpg")} alt="7" />
+        <div style={{ marginLeft: 20 }} className="text">
+          Only My Issues
+        </div>
+        <div style={{ marginLeft: 20 }} className="text">
+          Recently Updated
         </div>
       </div>
-      <div style={{ marginLeft: 20 }} className="text">
-        Only My Issues
-      </div>
-      <div style={{ marginLeft: 20 }} className="text">
-        Recently Updated
-      </div>
-    </div>
+    </>
   );
 }

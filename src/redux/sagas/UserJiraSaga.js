@@ -34,7 +34,7 @@ function* signinSaga(action) {
     });
 
     let history = yield select((state) => state.HistoryReducer.history);
-    history.push("/jira");
+    history.push("/projectmanagement");
   } catch (error) {
     console.log(error.response.data);
   }
@@ -81,4 +81,21 @@ function* addUserProjectSaga(action) {
 
 export function* theoDoiAddUserProject() {
   yield takeLatest("ADD_USER_PROJECT_API", addUserProjectSaga);
+}
+
+function* removeUserProjectSaga(action) {
+  try {
+    const { data, status } = yield call(() =>
+      userService.deleteUserFromProject(action.userProject)
+    );
+    yield put({
+      type: "GET_LIST_PROJECT_SAGA",
+    });
+  } catch (error) {
+    console.log(error.response.data);
+  }
+}
+
+export function* theoDoiRemoveUserProject() {
+  yield takeLatest("REMOVE_USER_PROJECT_API", removeUserProjectSaga);
 }

@@ -5,6 +5,10 @@ import { DISPLAY_LOADING, HIDE_LOADING } from "../constants/LoadingConst";
 import { history } from "../../util/history";
 import { projectService } from "../../services/ProjectService";
 import { notifiFunction } from "../../util/Notification/notification";
+import {
+  GET_ALL_PROJECT,
+  GET_ALL_PROJECT_SAGA,
+} from "../constants/ProjectJiraConstants";
 
 function* createProjectSaga(action) {
   yield put({
@@ -115,4 +119,58 @@ export function* deleteProjectSaga(action) {
 
 export function* theoDoiDeleteProject() {
   yield takeLatest("DELETE_PROJECT_SAGA", deleteProjectSaga);
+}
+
+export function* getProjectDetailSaga(action) {
+  yield put({
+    type: DISPLAY_LOADING,
+  });
+  yield delay(500);
+
+  try {
+    const { data, status } = yield call(() =>
+      projectService.getProjectDetail(action.projectId)
+    );
+
+    yield put({
+      type: "PUT_PROJECT_DETAIL",
+      projectDetail: data.content,
+    });
+  } catch (error) {
+    console.log(error);
+    history.push("/projectmanagement");
+  }
+
+  yield put({
+    type: HIDE_LOADING,
+  });
+}
+
+export function* theoDoiGetProjectDetail() {
+  yield takeLatest("GET_PROJECT_DETAIL", getProjectDetailSaga);
+}
+
+export function* getAllProjectSaga(action) {
+  yield put({
+    type: DISPLAY_LOADING,
+  });
+  yield delay(500);
+
+  try {
+    const { data, status } = yield call(() => projectService.getAllProject());
+    yield put({
+      type: GET_ALL_PROJECT,
+      arrProject: data.content,
+    });
+  } catch (error) {
+    console.log("404 not found !!!");
+  }
+
+  yield put({
+    type: HIDE_LOADING,
+  });
+}
+
+export function* theoDoiGetAllProjectSaga() {
+  yield takeLatest(GET_ALL_PROJECT_SAGA, getAllProjectSaga);
 }

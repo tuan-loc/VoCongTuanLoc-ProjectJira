@@ -18,7 +18,6 @@ export const UserLoginJiraReducer = (state = stateDefault, action) => {
 
     case "GET_USER_SEARCH": {
       state.userSearch = action.listUserSearch;
-      console.log(state);
       return { ...state };
     }
 

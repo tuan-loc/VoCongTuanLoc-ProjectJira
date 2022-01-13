@@ -33,6 +33,11 @@ function App() {
           path="/projectmanagement"
           Component={ProjectManagement}
         />
+        <JiraTemplate
+          exact
+          path="/projectdetail/:projectId"
+          Component={indexJira}
+        />
 
         <HomeTemplate path="*" Component={PageNotFound} />
       </Switch>
