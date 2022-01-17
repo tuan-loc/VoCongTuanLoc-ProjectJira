@@ -7,7 +7,7 @@ import { UserLoginTemplate } from "./templates/HomeTemplate/UserLoginTemplate";
 import LoginJira from "./pages/Login/Login";
 import { useDispatch } from "react-redux";
 import { JiraTemplate } from "./templates/HomeTemplate/JiraTemplate";
-import indexJira from "./redux/sagas/indexJira";
+import indexJira from "./pages/ProjectDetail/indexJira";
 import CreateProject from "./pages/CreateProject/CreateProject";
 import ProjectManagement from "./pages/ProjectManagement/ProjectManagement";
 import Modal from "./HOC/Modal";

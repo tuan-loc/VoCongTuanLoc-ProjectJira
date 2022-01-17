@@ -9,10 +9,10 @@ import { drawerReducer } from "./reducers/DrawerJira";
 import { ProjectReducer } from "./reducers/ProjectReducer";
 import { TaskTypeReducer } from "./reducers/TaskTypeReducer";
 
-// middleware saga
 import createMiddleWareSaga from "redux-saga";
 import { rootSaga } from "./sagas/rootSaga";
 import { PriorityReducer } from "./reducers/PriorityReducer";
+import { StatusReducer } from "./reducers/StatusReducer";
 
 const middleWareSaga = createMiddleWareSaga();
 
@@ -26,6 +26,7 @@ const rootReducer = combineReducers({
   ProjectReducer,
   TaskTypeReducer,
   PriorityReducer,
+  StatusReducer,
 });
 
 const store = createStore(
@@ -33,7 +34,6 @@ const store = createStore(
   applyMiddleware(reduxThunk, middleWareSaga)
 );
 
-// Gọi saga
 middleWareSaga.run(rootSaga);
 
 export default store;

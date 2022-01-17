@@ -10,9 +10,17 @@ import {
 } from "redux-saga/effects";
 import { jiraService } from "../../services/JiraService";
 import { userService } from "../../services/UserService";
-import { ACCESS_TOKEN, USER_LOGIN } from "../../util/constants/settingSystem";
+import {
+  ACCESS_TOKEN,
+  STATUS_CODE,
+  USER_LOGIN,
+} from "../../util/constants/settingSystem";
 import { USER_SIGNIN_API, USLOGIN } from "../constants/Jira";
 import { DISPLAY_LOADING, HIDE_LOADING } from "../constants/LoadingConst";
+import {
+  GET_USER_BY_PROJECT_ID,
+  GET_USER_BY_PROJECT_ID_SAGA,
+} from "../constants/UserConstants";
 
 function* signinSaga(action) {
   yield put({
@@ -98,4 +106,33 @@ function* removeUserProjectSaga(action) {
 
 export function* theoDoiRemoveUserProject() {
   yield takeLatest("REMOVE_USER_PROJECT_API", removeUserProjectSaga);
+}
+
+function* getUserByProjectIdSaga(action) {
+  const { idProject } = action;
+  try {
+    const { data, status } = yield call(() =>
+      userService.getUserByProjectId(idProject)
+    );
+
+    if (status === STATUS_CODE.SUCCESS) {
+      yield put({
+        type: GET_USER_BY_PROJECT_ID,
+        arrUser: data.content,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    console.log(error.response?.data);
+    if (error.response?.data.statusCode === STATUS_CODE.NOT_FOUND) {
+      yield put({
+        type: GET_USER_BY_PROJECT_ID,
+        arrUser: [],
+      });
+    }
+  }
+}
+
+export function* theoDoiGetUserByProjectId() {
+  yield takeLatest(GET_USER_BY_PROJECT_ID_SAGA, getUserByProjectIdSaga);
 }

@@ -9,6 +9,7 @@ import {
   GET_ALL_PROJECT,
   GET_ALL_PROJECT_SAGA,
 } from "../constants/ProjectJiraConstants";
+import { GET_USER_BY_PROJECT_ID_SAGA } from "../constants/UserConstants";
 
 function* createProjectSaga(action) {
   yield put({
@@ -161,6 +162,11 @@ export function* getAllProjectSaga(action) {
     yield put({
       type: GET_ALL_PROJECT,
       arrProject: data.content,
+    });
+
+    yield put({
+      type: GET_USER_BY_PROJECT_ID_SAGA,
+      idProject: data.content[0].id,
     });
   } catch (error) {
     console.log("404 not found !!!");

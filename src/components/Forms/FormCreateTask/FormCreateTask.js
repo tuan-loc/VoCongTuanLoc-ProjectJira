@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Select, Slider } from "antd";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, connect } from "react-redux";
 import { GET_ALL_PROJECT_SAGA } from "../../../redux/constants/ProjectJiraConstants";
 import { GET_ALL_TASK_TYPE_SAGA } from "../../../redux/constants/TaskTypeConstants";
 import { GET_ALL_PRIORITY_SAGA } from "../../../redux/constants/PriorityConstants";
+import { withFormik } from "formik";
+import * as Yup from "yup";
+import { GET_ALL_STATUS_SAGA } from "../../../redux/constants/StatusConstant";
+import { GET_USER_BY_PROJECT_ID_SAGA } from "../../../redux/constants/UserConstants";
 
 const { Option } = Select;
 
@@ -13,12 +17,26 @@ for (let i = 10; i < 36; i++) {
   children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
 }
 
-export default function FormCreateTask(props) {
+function FormCreateTask(props) {
+  const {
+    values,
+    touched,
+    errors,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    setFieldValue,
+  } = props;
+
   const { arrProject } = useSelector((state) => state.ProjectJiraReducer);
-
   const { arrTaskType } = useSelector((state) => state.TaskTypeReducer);
-
   const { arrPriority } = useSelector((state) => state.PriorityReducer);
+  const { arrUser } = useSelector((state) => state.UserLoginJiraReducer);
+  const { arrStatus } = useSelector((state) => state.StatusReducer);
+
+  const userOption = arrUser.map((item, index) => {
+    return { value: item.userId, label: item.name };
+  });
 
   const dispatch = useDispatch();
 
@@ -33,19 +51,27 @@ export default function FormCreateTask(props) {
     dispatch({ type: GET_ALL_PROJECT_SAGA });
     dispatch({ type: GET_ALL_TASK_TYPE_SAGA });
     dispatch({ type: GET_ALL_PRIORITY_SAGA });
+    dispatch({ type: GET_ALL_STATUS_SAGA });
+    dispatch({ type: "SET_SUBMIT_CREATE_TASK", submitFuction: handleSubmit });
+    dispatch({ type: "GET_USER_API", keyWord: "" });
   }, []);
 
-  const handleEditorChange = (content, editor) => {};
-
-  function handleChange(value) {
-    console.log(`Selected: ${value}`);
-  }
-
   return (
-    <div className="container">
+    <form className="container" onSubmit={handleSubmit}>
       <div className="form-group">
         <p>Project</p>
-        <select className="form-control" name="projectId">
+        <select
+          className="form-control"
+          name="projectId"
+          onChange={(e) => {
+            let { value } = e.target;
+            dispatch({
+              type: GET_USER_BY_PROJECT_ID_SAGA,
+              idProject: value,
+            });
+            setFieldValue("projectId", e.target.value);
+          }}
+        >
           {arrProject.map((project, index) => {
             return (
               <option key={index} value={project.id}>
@@ -56,14 +82,43 @@ export default function FormCreateTask(props) {
         </select>
       </div>
       <div className="form-group">
+        <p>Task name</p>
+        <input
+          name="taskName"
+          className="form-control"
+          onChange={handleChange}
+        />
+      </div>
+      <div className="form-group">
+        <p>Status</p>
+        <select
+          name="statusId"
+          className="form-control"
+          onChange={handleChange}
+        >
+          {arrStatus.map((statusItem, index) => {
+            return (
+              <option key={index} value={statusItem.statusId}>
+                {statusItem.statusName}
+              </option>
+            );
+          })}
+        </select>
+      </div>
+      <div className="form-group">
         <div className="row">
           <div className="col-md-6">
             <p>Priority</p>
-            <select name="priorityId" className="form-control">
+            <select
+              onChange={handleChange}
+              name="priorityId"
+              className="form-control"
+              onChange={handleChange}
+            >
               {arrPriority.map((priority, index) => {
                 return (
                   <option key={index} value={priority.priorityId}>
-                    {priority.priority}
+                    {priority.content.priority}
                   </option>
                 );
               })}
@@ -71,11 +126,15 @@ export default function FormCreateTask(props) {
           </div>
           <div className="col-md-6">
             <p>Task type</p>
-            <select name="typeTd" className="form-control">
+            <select
+              name="typeTd"
+              className="form-control"
+              onChange={handleChange}
+            >
               {arrTaskType.map((taskType, index) => {
                 return (
                   <option key={index} value={taskType.id}>
-                    {taskType.taskType}
+                    {taskType.content.taskType}
                   </option>
                 );
               })}
@@ -90,14 +149,16 @@ export default function FormCreateTask(props) {
             <Select
               mode="multiple"
               size={size}
-              options={[
-                { value: "a12", label: "b12" },
-                { value: "a12", label: "b12" },
-                { value: "a12", label: "b12" },
-              ]}
+              options={userOption}
               placeholder="Please select"
-              defaultValue={["a10", "c12"]}
-              onChange={handleChange}
+              defaultValue={["Nguyen Van A"]}
+              optionFilterProp="label"
+              onChange={(values) => {
+                setFieldValue("listUserAsign", values);
+              }}
+              onSelect={(value) => {
+                console.log(value);
+              }}
               style={{ width: "100%" }}
             >
               {children}
@@ -112,6 +173,7 @@ export default function FormCreateTask(props) {
                   defaultValue="0"
                   name="originalEstimate"
                   height="30"
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -148,6 +210,7 @@ export default function FormCreateTask(props) {
                       ...timeTracking,
                       timeTrackingSpent: e.target.value,
                     });
+                    setFieldValue("timeTrackingSpent", e.target.value);
                   }}
                 />
               </div>
@@ -164,6 +227,7 @@ export default function FormCreateTask(props) {
                       ...timeTracking,
                       timeTrackingRemaining: e.target.value,
                     });
+                    setFieldValue("timeTrackingRemaining", e.target.value);
                   }}
                 />
               </div>
@@ -190,9 +254,57 @@ export default function FormCreateTask(props) {
               "alignright alignjustify | bullist numlist outdent indent | " +
               "removeformat | help",
           }}
-          onEditorChange={handleEditorChange}
+          onEditorChange={(content, editor) => {
+            setFieldValue("description", content);
+          }}
         />
       </div>
-    </div>
+    </form>
   );
 }
+
+const formCreateTask = withFormik({
+  enableReinitialize: true,
+  mapPropsToValues: (props) => {
+    const { arrProject, arrTaskType, arrPriority, arrStatus } = props;
+
+    // if (arrProject.length > 0) {
+    //   props.dispatch({
+    //     type: GET_USER_BY_PROJECT_ID_SAGA,
+    //     idProject: arrProject[0]?.id,
+    //   });
+    // }
+
+    return {
+      taskName: "",
+      description: "",
+      statusId: arrStatus[0]?.statusId,
+      originalEstimate: 0,
+      timeTrackingSpent: 0,
+      timeTrackingRemaining: 0,
+      projectId: arrProject[0]?.id,
+      typeId: arrTaskType[0]?.id,
+      priorityId: arrPriority[0]?.priorityId,
+      listUserAsign: [],
+    };
+  },
+
+  validationSchema: Yup.object().shape({}),
+
+  handleSubmit: (values, { props, setSubmitting }) => {
+    props.dispatch({ type: "CREATE_TASK_SAGA", taskObject: values });
+  },
+
+  displayName: "createTaskForm",
+})(FormCreateTask);
+
+const mapStateToProps = (state) => {
+  return {
+    arrProject: state.ProjectJiraReducer.arrProject,
+    arrTaskType: state.TaskTypeReducer.arrTaskType,
+    arrStatus: state.StatusReducer.arrStatus,
+    arrPriority: state.PriorityReducer.arrPriority,
+  };
+};
+
+export default connect(mapStateToProps)(formCreateTask);
